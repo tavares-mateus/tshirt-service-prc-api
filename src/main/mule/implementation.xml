@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:t-shirt-service-inventory-system-api="http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:t-shirt-service-order-system-api="http://www.mulesoft.org/schema/mule/t-shirt-service-order-system-api"
+	xmlns:t-shirt-service-track-system-api="http://www.mulesoft.org/schema/mule/t-shirt-service-track-system-api" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/t-shirt-service-track-system-api http://www.mulesoft.org/schema/mule/t-shirt-service-track-system-api/current/mule-t-shirt-service-track-system-api.xsd
+http://www.mulesoft.org/schema/mule/t-shirt-service-order-system-api http://www.mulesoft.org/schema/mule/t-shirt-service-order-system-api/current/mule-t-shirt-service-order-system-api.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api/current/mule-t-shirt-service-inventory-system-api.xsd">
+	<flow name="getOrders" doc:id="04a46d6d-316f-4988-8e64-7b2f27416994" >
+		<t-shirt-service-order-system-api:get-orders doc:name="Get orders" doc:id="4202d3a2-0e28-446f-8220-424b3f697a3c" config-ref="T_Shirt_Service_Order_System_API_Config" product-code="#[message.attributes.queryParams.productCode]" size="#[message.attributes.queryParams.size]" client-id="${orders.clientid}" client-secret="${orders.clientsecret}"/>
+	</flow>
+	<flow name="postOrder" doc:id="bb010eda-8b52-4aae-ab49-e6665fd4b2cf">
+		<t-shirt-service-order-system-api:create-an-order doc:name="Create an order" doc:id="e7b6c4c0-a457-494f-a312-4128d7d096a4" config-ref="T_Shirt_Service_Order_System_API_Config" client-id="${orders.clientid}" client-secret="${orders.clientsecret}" />
+		<set-variable value="#[payload]" doc:name="originalPayload" doc:id="fac1c15d-ab94-4cc7-9863-cf49366a32d4" variableName="originalPayload"/>
+		<t-shirt-service-track-system-api:creates-an-order-track doc:name="Creates an order track" doc:id="46e59fa5-b15f-49ee-a1a5-240b7011fab2" config-ref="T_Shirt_Service_Track_System_API_Config" order-id="#[payload.orderId]" client-id="${track.clientid}" client-secret="${track.clientsecret}">
+			<t-shirt-service-track-system-api:creates-an-order-track-request-data ><![CDATA[#[{
+	orderId: payload.orderId,
+	status: "WAITING_CARRIER"
+}]]]></t-shirt-service-track-system-api:creates-an-order-track-request-data>
+		</t-shirt-service-track-system-api:creates-an-order-track>
+		<ee:transform doc:name="Transform Message" doc:id="c00374c4-c889-4ca1-9bee-e50b49e93254" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": vars.originalPayload.message,
+	"orderId": vars.originalPayload.orderId,
+	"message": payload.message
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getAnOrderById" doc:id="92600cd2-0037-4def-8cd4-6ed0bf7ca758" >
+		<t-shirt-service-order-system-api:get-an-order-by-id doc:name="Get an order by ID" doc:id="ac429122-7be5-4ef1-a86a-379195172cd9" config-ref="T_Shirt_Service_Order_System_API_Config" order-id="#[message.attributes.uriParams.orderId]" client-id="${orders.clientid}" client-secret="${orders.clientsecret}"/>
+	</flow>
+	<flow name="deleteAnOrderById" doc:id="d89eba2a-f358-4a3f-8dac-21d7874de605">
+		<set-variable value="#[message.attributes.uriParams.orderId]" doc:name="orderId" doc:id="9842dafc-2993-480e-b266-44c3209e67d8" variableName="orderId"/>
+		<t-shirt-service-order-system-api:delete-an-order-by-id doc:name="Delete an order by ID" doc:id="a130002a-a2d2-46f1-8cbe-e22ed296b2ca" config-ref="T_Shirt_Service_Order_System_API_Config" order-id="#[message.attributes.uriParams.orderId]" client-id="${orders.clientid}" client-secret="${orders.clientsecret}"/>
+		<set-variable value="#[payload]" doc:name="originalPayload" doc:id="5ffee98a-cae6-4a7f-9fe0-b29eb0d30ca9" variableName="originalPayload"/>
+		<t-shirt-service-track-system-api:delete-an-order-track doc:name="Delete an order track" doc:id="c35245b4-ad9c-4f42-8d36-4e80f0fd02cd" config-ref="T_Shirt_Service_Track_System_API_Config" order-id="#[vars.orderId]" client-id="${track.clientid}" client-secret="${track.clientsecret}"/>
+		<ee:transform doc:name="Transform Message" doc:id="15017c00-59b9-47de-abdd-f81429df3f59" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": vars.originalPayload.message,
+	"message": payload.message
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="updateAnOrderById" doc:id="92736906-0bde-4b28-9149-3444b2cbc5eb">
+		<t-shirt-service-order-system-api:update-an-order-by-id doc:name="Update an order by ID" doc:id="56610740-3356-48f7-b86c-a2e383f4d1cf" config-ref="T_Shirt_Service_Order_System_API_Config" order-id="#[message.attributes.uriParams.orderId]" client-id="${orders.clientid}" client-secret="${orders.clientsecret}"/>
+	</flow>
+	<flow name="getAnOrderTrackById" doc:id="e3aa6cde-68b0-45ad-8d4d-bd823ce75259" >
+		<t-shirt-service-order-system-api:get-an-order-by-id doc:name="Get an order by ID" doc:id="b7b32475-46c5-4990-9e5b-9802df99917d" config-ref="T_Shirt_Service_Order_System_API_Config" order-id="#[message.attributes.uriParams.orderId]" client-id="${orders.clientid}" client-secret="${orders.clientsecret}" />
+		<set-variable value="#[payload]" doc:name="order" doc:id="1c69d9d8-b827-41fa-b0a9-1e48f74510af" variableName="order"/>
+		<t-shirt-service-track-system-api:tracks-the-order doc:name="Tracks the order" doc:id="73256968-85cc-45fc-84e0-40caaf9f7dd8" config-ref="T_Shirt_Service_Track_System_API_Config" order-id="#[payload[0].orderId]" client-id="${track.clientid}" client-secret="${track.clientsecret}" />
+		<ee:transform doc:name="Transform Message" doc:id="c8d5d82a-2ff1-4119-b5fa-dca68b7d5919" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"orderId": payload[0].orderId,
+	"status": payload[0].status,
+	"productCode": vars.order[0].productCode,
+	"size": vars.order[0].size
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="updateAnOrderTrackById" doc:id="f4cd5b83-bb2d-413c-9ac7-b5707b9e43c6" >
+		<t-shirt-service-track-system-api:update-the-status-of-an-order doc:name="Update the status of an order" doc:id="70882d4a-b9b8-4e8f-9c4a-b7b15961cbbe" config-ref="T_Shirt_Service_Track_System_API_Config" order-id="#[message.attributes.uriParams.orderId]" client-id="${track.clientid}" client-secret="${track.clientsecret}"/>
+	</flow>
+	<flow name="listInventory" doc:id="91de4a08-d506-402a-9e2c-c2f3e0a88dc1" >
+		<t-shirt-service-inventory-system-api:get-inventories doc:name="Get inventories" doc:id="7386d366-058c-4e7e-9bb0-feb08068d021" config-ref="T_Shirt_Service_Inventory_System_API_Config" client-id="${inventory.clientid}" client-secret="${inventory.clientsecret}" product-code="#[message.attributes.queryParams.productCode]" size="#[message.attributes.queryParams.size]" description="#[message.attributes.queryParams.description]"/>
+	</flow>
+</mule>

@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
-    <http:listener-config name="t-shirt-service-process-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8081" />
-    </http:listener-config>
-    <apikit:config name="t-shirt-service-process-config" api="resource::f36a6db6-b129-4fa3-9f09-674196c546bf:t-shirt-service-process-api:1.0.0:raml:zip:t-shirt-service-process.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    <apikit:config name="t-shirt-service-process-config" api="resource::f36a6db6-b129-4fa3-9f09-674196c546bf:t-shirt-service-process-api:1.0.5:raml:zip:t-shirt-service-process.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="t-shirt-service-process-main">
-        <http:listener config-ref="t-shirt-service-process-httpListenerConfig" path="/api/*">
+        <http:listener path="/api/*" config-ref="HTTP_Listener_config">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="t-shirt-service-process-config" />
@@ -97,13 +94,13 @@ output application/json
         </error-handler>
     </flow>
     <flow name="t-shirt-service-process-console">
-        <http:listener config-ref="t-shirt-service-process-httpListenerConfig" path="/console/*">
+        <http:listener path="/console/*" config-ref="HTTP_Listener_config">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
         <apikit:console config-ref="t-shirt-service-process-config" />
@@ -123,36 +120,28 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\orders\(orderId)\track:t-shirt-service-process-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="orderId">attributes.uriParams.'orderId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  orderId: 12,
-  status: "IN_TRANSIT",
-  productCode: 105,
-  size: "XL"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+    <flow name="get:\orders:t-shirt-service-process-config">
+        <flow-ref doc:name="getOrders" doc:id="805fc689-193c-4e73-bfe2-3421a3a02eff" name="getOrders" />
     </flow>
     <flow name="post:\orders:application\json:t-shirt-service-process-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  message: "Order created!"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+        <flow-ref doc:name="postOrder" doc:id="1458470b-56c7-4b5c-b7f7-aab6ecef9392" name="postOrder" />
+    </flow>
+    <flow name="get:\orders\(orderId):t-shirt-service-process-config">
+        <flow-ref doc:name="getAnOrderById" doc:id="fd6638f0-76ea-496e-8a22-982cd3e6ee97" name="getAnOrderById" />
+    </flow>
+    <flow name="delete:\orders\(orderId):t-shirt-service-process-config">
+        <flow-ref doc:name="deleteAnOrderById" doc:id="946129cf-86d3-4637-aa1f-22a89aee64b5" name="deleteAnOrderById" />
+    </flow>
+    <flow name="put:\orders\(orderId):application\json:t-shirt-service-process-config">
+        <flow-ref doc:name="updateAnOrderById" doc:id="649181ef-49d4-4e73-b8ec-77e4c4aec0d1" name="updateAnOrderById" />
+    </flow>
+    <flow name="get:\orders\(orderId)\track:t-shirt-service-process-config">
+        <flow-ref doc:name="trackAnOrderById" doc:id="469910f1-5d36-4fdc-bfee-73a97351bcba" name="getAnOrderTrackById" />
+    </flow>
+    <flow name="put:\orders\(orderId)\track:application\json:t-shirt-service-process-config">
+        <flow-ref doc:name="updateAnOrderTrackById" doc:id="830c1b6c-97ee-4585-af99-a82e6a58e9cb" name="updateAnOrderTrackById" />
+    </flow>
+    <flow name="get:\inventory:t-shirt-service-process-config">
+		<flow-ref doc:name="listInventory" doc:id="df70b19c-5eb5-484a-bb8a-82f8c061ff17" name="listInventory"/>
     </flow>
 </mule>

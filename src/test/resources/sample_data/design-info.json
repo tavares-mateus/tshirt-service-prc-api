@@ -1,0 +1,8 @@
+{
+  "sampleData": {
+    "15017c00-59b9-47de-abdd-f81429df3f59": {
+      "vars-originalPayload": "sample_data/defaultstringtype.dwl",
+      "payload": "sample_data/defaultstringtype_1.dwl"
+    }
+  }
+}

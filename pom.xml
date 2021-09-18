@@ -36,27 +36,45 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-http-connector</artifactId>
-			<version>1.5.25</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.connectors</groupId>
 			<artifactId>mule-sockets-connector</artifactId>
 			<version>1.2.1</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-apikit-module</artifactId>
+			<version>1.5.2</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-http-connector</artifactId>
+			<version>1.5.23</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>f36a6db6-b129-4fa3-9f09-674196c546bf</groupId>
+			<artifactId>mule-plugin-t-shirt-service-order-system-api</artifactId>
+			<version>1.0.1</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
 			<groupId>f36a6db6-b129-4fa3-9f09-674196c546bf</groupId>
 			<artifactId>t-shirt-service-process-api</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.5</version>
 			<classifier>raml</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-apikit-module</artifactId>
-			<version>1.5.2</version>
+			<groupId>f36a6db6-b129-4fa3-9f09-674196c546bf</groupId>
+			<artifactId>mule-plugin-t-shirt-service-inventory-system-api</artifactId>
+			<version>1.0.3</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>f36a6db6-b129-4fa3-9f09-674196c546bf</groupId>
+			<artifactId>mule-plugin-t-shirt-service-track-system-api</artifactId>
+			<version>1.0.8</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>

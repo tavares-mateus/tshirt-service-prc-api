@@ -1,0 +1,30 @@
+http:
+  port: "8081"
+
+orders:
+  host: "tshirt-service-order-sys-api.us-e2.cloudhub.io"
+  port: "80"
+  protocol: "HTTP"
+  basepath: "/api"
+  timeout: "10000"
+  clientid: "14600d14441647f5828ea2463323b2ad"
+  clientsecret: "BF071184ac364c46BDaf84FBd7730280"
+
+track:
+  host: "tshirt-service-track-sys-api.us-e2.cloudhub.io"
+  port: "80"
+  protocol: "HTTP"
+  basepath: "/api"
+  timeout: "10000"
+  clientid: "14600d14441647f5828ea2463323b2ad"
+  clientsecret: "BF071184ac364c46BDaf84FBd7730280"
+
+inventory:
+  host: " tshirt-service-inventory-sys-api.us-e2.cloudhub.io"
+  port: "80"
+  protocol: "HTTP"
+  basepath: "/api"
+  timeout: "10000"
+  clientid: "14600d14441647f5828ea2463323b2ad"
+  clientsecret: "BF071184ac364c46BDaf84FBd7730280"
+
