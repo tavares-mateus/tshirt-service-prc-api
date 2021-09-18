@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:t-shirt-service-inventory-system-api="http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api" xmlns:t-shirt-service-track-system-api="http://www.mulesoft.org/schema/mule/t-shirt-service-track-system-api"
-	xmlns:t-shirt-service-order-system-api="http://www.mulesoft.org/schema/mule/t-shirt-service-order-system-api"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:t-shirt-service-inventory-system-api="http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api"
+	xmlns:t-shirt-service-track-system-api="http://www.mulesoft.org/schema/mule/t-shirt-service-track-system-api"
+	xmlns:t-shirt-service-order-system-api="http://www.mulesoft.org/schema/mule/t-shirt-service-order-system-api" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/t-shirt-service-order-system-api http://www.mulesoft.org/schema/mule/t-shirt-service-order-system-api/current/mule-t-shirt-service-order-system-api.xsd
 http://www.mulesoft.org/schema/mule/t-shirt-service-track-system-api http://www.mulesoft.org/schema/mule/t-shirt-service-track-system-api/current/mule-t-shirt-service-track-system-api.xsd
-http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api/current/mule-t-shirt-service-inventory-system-api.xsd">
+http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api/current/mule-t-shirt-service-inventory-system-api.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1f32b52b-7b9a-40b9-96f1-1fc5059513bb" >
 		<http:listener-connection host="0.0.0.0" port="${http.port}" />
 	</http:listener-config>
@@ -14,4 +15,5 @@ http://www.mulesoft.org/schema/mule/t-shirt-service-inventory-system-api http://
 	<t-shirt-service-order-system-api:config name="T_Shirt_Service_Order_System_API_Config" doc:name="T-Shirt Service Order System API Config" doc:id="1596766d-1adb-4478-8e7a-b2755ca8e799" property_host="${orders.host}" property_port="${orders.port}" property_protocol="${orders.protocol}" property_basePath="${orders.basepath}" property_responseTimeout="${orders.timeout}"/>
 	<t-shirt-service-track-system-api:config name="T_Shirt_Service_Track_System_API_Config" doc:name="T-Shirt Service Track System API Config" doc:id="de0913de-758f-49bc-af36-93dd910fb5b8" property_host="${track.host}" property_port="${track.port}" property_protocol="${track.protocol}" property_basePath="${track.basepath}" property_responseTimeout="${track.timeout}" />
 	<t-shirt-service-inventory-system-api:config name="T_Shirt_Service_Inventory_System_API_Config" doc:name="T-Shirt Service Inventory System API Config" doc:id="78e4bd7c-5535-4bd2-a71b-6bce287cd299" property_host="${inventory.host}" property_port="${inventory.port}" property_protocol="${inventory.protocol}" property_basePath="${inventory.basepath}" property_responseTimeout="${inventory.timeout}" />
+	<api-gateway:autodiscovery apiId="17272494" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="c578616b-3a06-47cb-b808-e805233e6daa" flowRef="t-shirt-service-process-main" />
 </mule>
